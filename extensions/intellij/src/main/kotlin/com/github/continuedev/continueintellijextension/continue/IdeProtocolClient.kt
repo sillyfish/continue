@@ -91,6 +91,15 @@ class IdeProtocolClient(
                         respond(jsonData)
                     }
 
+                    "showFile" -> {
+                        val params = Gson().fromJson(
+                            dataElement.toString(),
+                            ShowFilePayload::class.java
+                        )
+                        ide.openFile(params.filepath)
+                        respond(null)
+                    }
+
                     "getIdeSettings" -> {
                         val settings = ide.getIdeSettings()
                         respond(settings)
@@ -438,7 +447,7 @@ class IdeProtocolClient(
                     "acceptDiff" -> {
                         val params = Gson().fromJson(
                             dataElement.toString(),
-                            AcceptDiffParams::class.java
+                            AcceptOrRejectDiffPayload::class.java
                         )
                         val filepath = params.filepath;
 
@@ -454,7 +463,7 @@ class IdeProtocolClient(
                     "rejectDiff" -> {
                         val params = Gson().fromJson(
                             dataElement.toString(),
-                            RejectDiffParams::class.java
+                            AcceptOrRejectDiffPayload::class.java
                         )
                         val filepath = params.filepath;
 
@@ -493,12 +502,18 @@ class IdeProtocolClient(
 
     fun sendHighlightedCode(edit: Boolean = false) {
         val editor = EditorUtils.getEditor(project)
-        val rif = editor?.getHighlightedCode() ?: return
+        val rif = editor?.getHighlightedRIF() ?: return
+
+       val serializedRif = com.github.continuedev.continueintellijextension.RangeInFileWithContents(
+            filepath = rif.filepath,
+            range = rif.range,
+            contents = rif.contents
+        )
 
         continuePluginService.sendToWebview(
             "highlightedCode",
             HighlightedCodePayload(
-                rangeInFileWithContents = rif,
+                rangeInFileWithContents = serializedRif,
                 shouldRun = edit
             )
         )
