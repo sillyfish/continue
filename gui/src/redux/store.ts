@@ -132,7 +132,7 @@ export function setupStore(options: { ideMessenger?: IIdeMessenger }) {
             ideMessenger,
           },
         },
-      }),
+      }).concat(logger),
     // This can be uncommented to get detailed Redux logs
     // .concat(logger),
   });

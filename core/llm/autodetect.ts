@@ -232,6 +232,10 @@ function autodetectTemplateType(model: string): TemplateType | undefined {
     return "none";
   }
 
+  if (lower.includes("qwen")) {
+    return "none";
+  }
+
   if (lower.includes("codestral")) {
     return "none";
   }

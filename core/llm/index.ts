@@ -374,6 +374,15 @@ export abstract class BaseLLM implements ILLM {
     // Custom Node.js fetch
     const customFetch = async (input: URL | RequestInfo, init: any) => {
       try {
+        this.requestOptions = {
+          ...this.requestOptions,
+          headers: {
+            ...this.requestOptions?.headers,
+            ProjectId: "0",
+            Authorization: `Bearer 666666`,
+          },
+        };
+        console.log("Request options:", this.requestOptions);
         const resp = await fetchwithRequestOptions(
           new URL(input as any),
           { ...init },
@@ -907,6 +916,9 @@ export abstract class BaseLLM implements ILLM {
           let body = toChatBody(messages, completionOptions);
           body = this.modifyChatBody(body);
 
+          // 打印请求 body
+          console.log("OpenAIAdapter chat request body:", body);
+
           if (completionOptions.stream === false) {
             // Stream false
             const response = await this.openaiAdapter.chatCompletionNonStream(
@@ -926,6 +938,9 @@ export abstract class BaseLLM implements ILLM {
               signal,
             );
             for await (const chunk of stream) {
+              // 打印每个分片 chunk
+              console.log("OpenAIAdapter chat stream chunk:", chunk);
+
               const result = fromChatCompletionChunk(chunk);
               if (result) {
                 completion += result.content;

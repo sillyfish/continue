@@ -232,4 +232,7 @@ export const PROVIDER_TOOL_SUPPORT: Record<
       }
     }
   },
+  vllm: (model) => {
+    return true;
+  },
 };

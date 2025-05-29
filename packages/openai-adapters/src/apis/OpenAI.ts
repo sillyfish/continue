@@ -31,6 +31,9 @@ export class OpenAIApi implements BaseLlmApi {
       apiKey: config.apiKey,
       baseURL: this.apiBase,
       fetch: customFetch(config.requestOptions),
+      defaultHeaders: {
+        ProjectId: "0",
+      },
     });
   }
 
@@ -70,6 +73,7 @@ export class OpenAIApi implements BaseLlmApi {
     );
     return response;
   }
+
   async *chatCompletionStream(
     body: ChatCompletionCreateParamsStreaming,
     signal: AbortSignal,
@@ -84,6 +88,7 @@ export class OpenAIApi implements BaseLlmApi {
       yield result;
     }
   }
+
   async completionNonStream(
     body: CompletionCreateParamsNonStreaming,
     signal: AbortSignal,
@@ -91,6 +96,7 @@ export class OpenAIApi implements BaseLlmApi {
     const response = await this.openai.completions.create(body, { signal });
     return response;
   }
+
   async *completionStream(
     body: CompletionCreateParamsStreaming,
     signal: AbortSignal,
@@ -100,6 +106,7 @@ export class OpenAIApi implements BaseLlmApi {
       yield result;
     }
   }
+
   async *fimStream(
     body: FimCreateParamsStreaming,
     signal: AbortSignal,
